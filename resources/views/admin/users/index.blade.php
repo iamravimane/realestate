@@ -9,6 +9,21 @@
             <a href="{{ route('admin.users.create') }}" class="btn btn-primary float-end" role="button">Create</a>
         </div>
     </div>
+
+
+        <form action="{{ route('admin.users.search') }}" method="post" role="search"   class="row g-3 mb-2">
+            @csrf
+            <div class="col-auto">
+            <input type="text" placeholder="Search.." name="search" class="form-control">
+            </div>
+            <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+            <div class="col-auto">
+                Total:{{$users->total()}}
+                Current page:{{$users->count()}}
+            </div>
+        </form>
     <div class="card">
         <table class="table">
             <thead>
