@@ -6,7 +6,7 @@
             <p class="login-card-description">Edit User</p>
             <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
                 @method('patch')
-                @include('admin.users.partials.form')
+                @include('admin.users.partials.form',['avatar' => true])
             </form>
         </div>
     </div>

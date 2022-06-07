@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 
@@ -19,10 +21,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        if (Gate::denies('logged-in')){
-            dd('no access ablod');
-        }
-
+//        if (Gate::denies('logged-in')){
+//            dd('no access ');
+//        }
         if (Gate::allows('is-admin')){
             $users = User::paginate(10);
             return view('admin.users.index')->with(['users' => $users]);
@@ -57,7 +58,9 @@ class UserController extends Controller
         $newUser = new CreateNewUser();
         $user = $newUser->create($request->only(['name', 'email', 'password', 'password_confirmation']));
 
-        $user->addMedia($avatar)->toMediaCollection();
+        if($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+            $user->addMedia($avatar)->toMediaCollection();
+        }
 
         $user->roles()->sync($request->roles);
 
@@ -83,8 +86,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
+        try {
+            $user = (new UserService())->findById($id);
+        }catch (ModelNotFoundException $exception ){
+            return view('admin.users.notfound', ['error' => $exception->getMessage()]);
+        }
+
         return view('admin.users.edit',
             ['roles' => Role::all(),
              'user'  => User::find($id)
@@ -100,13 +109,22 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        try {
+            $user = (new UserService())->findById($id);
+        }catch (ModelNotFoundException $exception ){
+            return view('admin.users.notfound', ['error' => $exception->getMessage()]);
+        }
 
+        $avatar = $request->file('avatar');
         if (!$user){
             $request->session()->flash('error', 'You can not edit this user.');
             return redirect(route('admin.users.index'));
         }
         $user->update($request->except(['_token', 'roles']));
+
+        if($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+            $user->addMedia($avatar)->toMediaCollection();
+        }
 
         $user->roles()->sync($request->roles);
 
@@ -123,6 +141,12 @@ class UserController extends Controller
      */
     public function destroy($id,Request $request)
     {
+        try {
+            $user = (new UserService())->findById($id);
+        }catch (ModelNotFoundException $exception ){
+            return view('admin.users.notfound', ['error' => $exception->getMessage()]);
+        }
+        
         User::destroy($id);
 
         $request->session()->flash('success', 'you have deleted the user');

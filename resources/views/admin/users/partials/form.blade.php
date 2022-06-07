@@ -20,9 +20,14 @@
                                     </span>
     @enderror
 </div>
+
+
 <div class="form-group">
     <label for="email" class="sr-only">Photo</label>
     <input type="file" name="avatar" class="form-control @error('avatar') is-invalid @enderror">
+    @isset($avatar)
+        <img src="{{ $user->getFirstMediaUrl() }}" class="img-thumbnail" alt="">
+    @endisset
 </div>
 
 @isset($create)
@@ -31,8 +36,8 @@
     <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password"  autocomplete="new-password" placeholder="Password">
     @error('password')
     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+        <strong>{{ $message }}</strong>
+    </span>
     @enderror
 </div>
 
@@ -41,11 +46,10 @@
     <input id="password_confirmation" type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation"  autocomplete="new-password" placeholder="password_confirmation">
     @error('password')
     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+        <strong>{{ $message }}</strong>
+    </span>
     @enderror
 </div>
-
 @endisset
 
 <div class="form-group mb-4">

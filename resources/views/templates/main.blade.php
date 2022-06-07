@@ -19,7 +19,7 @@
 <div>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">{{ config('app.name') }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -32,7 +32,6 @@
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit()">
                                     Logout
                                 </a>
-
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none">
                                     @csrf
                                 </form>
@@ -48,7 +47,7 @@
                 </div>
         </div>
     </nav>
-@can('logged-in')
+  @can('logged-in')
     <nav class="navbar sub-nav navbar-expand-lg">
         <div class="container">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
