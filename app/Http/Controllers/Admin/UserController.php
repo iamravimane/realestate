@@ -146,10 +146,25 @@ class UserController extends Controller
         }catch (ModelNotFoundException $exception ){
             return view('admin.users.notfound', ['error' => $exception->getMessage()]);
         }
-        
+
         User::destroy($id);
 
         $request->session()->flash('success', 'you have deleted the user');
         return redirect(route('admin.users.index'));
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->get('search');
+
+        $users = User::where('name', 'like', '%' .$search. '%')->paginate();
+
+       // $users->appends(array('search'=> Input::get('search')));
+        if(count($users )>0){
+            return view('admin.users.index',['users' => $users]);
+        }
+
+        return back()->with('error','No results Found');
+
     }
 }

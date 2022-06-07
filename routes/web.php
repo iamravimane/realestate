@@ -31,4 +31,5 @@ Route::prefix('user')->middleware(['auth'])->name('user.')->group(function (){
 //Admin ROute
 Route::prefix('admin')->middleware(['auth', 'auth.isAdmin'])->name('admin.')->group(function (){
     Route::resource('users', UserController::class);
+    Route::post('search', 'App\Http\Controllers\Admin\UserController@search')->name('users.search');
 });
